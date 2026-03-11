@@ -11,7 +11,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useApp } from "@/context/AppContext"
+import { useApp } from "@/hooks/useApp"
 
 export function Sidebar() {
   const { state, setFilter } = useApp()
@@ -25,7 +25,7 @@ export function Sidebar() {
   ).length
 
   return (
-    <aside className="w-full border-b bg-muted/10 lg:w-64 lg:border-r lg:border-b-0 lg:fixed lg:top-16 lg:left-0 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
+    <aside className="w-full border-b bg-muted/10 lg:fixed lg:top-16 lg:left-0 lg:h-[calc(100vh-4rem)] lg:w-64 lg:overflow-y-auto lg:border-r lg:border-b-0">
       <div className="p-4 md:p-6">
         <h2 className="mb-4 text-lg font-semibold">操作面板</h2>
 

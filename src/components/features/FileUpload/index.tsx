@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useApp } from "@/context/AppContext"
+import { useApp } from "@/hooks/useApp"
 
 interface FileUploadProps {
   compact?: boolean

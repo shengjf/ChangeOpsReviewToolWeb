@@ -1,21 +1,26 @@
 /**
  * 应用主内容组件
  */
-import { useState, useEffect } from 'react'
-import { Header } from '@/components/layout/Header'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { FileUpload } from '@/components/upload/FileUpload'
-import { ValidationResults } from '@/components/results/ValidationResults'
-import { Loading } from '@/components/ui/loading'
-import { ToastManager } from '@/components/ui/toast'
-import { useApp } from '@/context/AppContext'
-import type { ToastItem } from '@/types/toast'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { CheckCircle, Loader2 } from 'lucide-react'
+import { useState, useEffect } from "react"
+import { Header } from "@/components/layout/Header"
+import { Sidebar } from "@/components/layout/Sidebar"
+import { FileUpload } from "@/components/features/FileUpload"
+import { ValidationResults } from "@/components/features/ValidationResults"
+import { Loading } from "@/components/ui/loading"
+import { ToastManager } from "@/components/ui/toast"
+import { useApp } from "@/hooks/useApp"
+import type { ToastItem } from "@/types/toast"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { CheckCircle } from "lucide-react"
 
 export function AppContent() {
-  const { state, clearError, validateAll } = useApp()
+  const { state, clearError } = useApp()
   const [toasts, setToasts] = useState<ToastItem[]>([])
 
   // 监听错误状态并显示Toast
@@ -41,10 +46,10 @@ export function AppContent() {
     if (!state.isLoading && state.validationResults.length > 0) {
       const timer = setTimeout(() => {
         const passedCount = state.validationResults.filter(
-          (r) => r.status === 'passed'
+          (r) => r.status === "passed"
         ).length
         const failedCount = state.validationResults.filter(
-          (r) => r.status === 'failed'
+          (r) => r.status === "failed"
         ).length
 
         if (passedCount > 0 || failedCount > 0) {
@@ -156,7 +161,8 @@ export function AppContent() {
             <div className="mx-auto max-w-[2000px]">
               <div className="text-center text-xs text-muted-foreground md:text-sm">
                 <p>
-                  ChangeOps Review Tool • 版本 1.0.0 • 最后更新: {new Date().toLocaleDateString()}
+                  ChangeOps Review Tool • 版本 1.0.0 • 最后更新:{" "}
+                  {new Date().toLocaleDateString()}
                 </p>
                 <p className="mt-1">
                   © 2025 上海ICNOC • 接入网与固网终端运行中心
@@ -171,7 +177,7 @@ export function AppContent() {
       {state.isLoading && (
         <Loading
           fullScreen
-          text={state.files.length > 0 ? '正在校验文档...' : '正在上传文件...'}
+          text={state.files.length > 0 ? "正在校验文档..." : "正在上传文件..."}
         />
       )}
 

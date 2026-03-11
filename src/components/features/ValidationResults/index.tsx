@@ -10,7 +10,6 @@ import {
   ChevronRight,
   FileText,
   Download,
-  Filter,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,7 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useApp } from "@/context/AppContext"
+import { useApp } from "@/hooks/useApp"
 
 export function ValidationResults() {
   const { state, setFilter } = useApp()

@@ -1,7 +1,7 @@
 /**
  * 应用状态管理上下文
  */
-import React, { createContext, useContext, useReducer } from "react"
+import React, { createContext, useReducer } from "react"
 import type { ReactNode } from "react"
 import type { FileInfo, ValidationResult, FilterOptions } from "@/types"
 import { uploadFiles, validateDocuments } from "@/services/api"
@@ -101,7 +101,7 @@ interface AppContextType {
   clearError: () => void
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined)
+export const AppContext = createContext<AppContextType | undefined>(undefined)
 
 /**
  * 上下文Provider组件
@@ -196,15 +196,4 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   )
-}
-
-/**
- * 使用App上下文的Hook
- */
-export function useApp() {
-  const context = useContext(AppContext)
-  if (context === undefined) {
-    throw new Error("useApp必须在AppProvider内部使用")
-  }
-  return context
 }
