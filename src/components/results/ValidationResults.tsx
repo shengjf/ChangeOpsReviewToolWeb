@@ -90,28 +90,38 @@ export function ValidationResults() {
 
   if (state.validationResults.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>校验结果</CardTitle>
-          <CardDescription>
-            上传文档并开始校验后，结果将显示在这里
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="py-12 text-center">
-          <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-          <h3 className="mb-2 text-lg font-medium">暂无校验结果</h3>
-          <p className="text-sm text-muted-foreground">
-            请先上传文档并点击"开始校验"按钮
-          </p>
-        </CardContent>
-      </Card>
+      <div className="flex h-full flex-col">
+        <Card className="flex-1">
+          <CardHeader>
+            <CardTitle>校验结果</CardTitle>
+            <CardDescription>
+              上传文档并开始校验后，结果将显示在这里
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col items-center justify-center py-12 text-center">
+            <FileText className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+            <h3 className="mb-2 text-lg font-medium">暂无校验结果</h3>
+            <p className="text-sm text-muted-foreground">
+              请先上传文档并点击"开始校验"按钮
+            </p>
+            <div className="mt-6 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+              <span>支持Word和Excel文档格式</span>
+            </div>
+            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+              <span>自动校验文档格式和内容规范</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-full flex-col space-y-6">
       {/* 结果概览 */}
-      <Card>
+      <Card className="flex-1">
         <CardHeader className="pb-3">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -126,28 +136,6 @@ export function ValidationResults() {
                 variant="outline"
                 size="sm"
                 className="text-xs sm:text-sm"
-                onClick={() => {
-                  // 切换筛选状态
-                  const nextStatus =
-                    state.filter.status === "all"
-                      ? "passed"
-                      : state.filter.status === "passed"
-                        ? "failed"
-                        : "all"
-                  setFilter({ status: nextStatus })
-                }}
-              >
-                <Filter className="mr-1.5 h-3.5 w-3.5 sm:mr-2 sm:h-4 sm:w-4" />
-                {state.filter.status === "all"
-                  ? "全部"
-                  : state.filter.status === "passed"
-                    ? "通过"
-                    : "失败"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs sm:text-sm"
                 onClick={handleExportReport}
               >
                 <Download className="mr-1.5 h-3.5 w-3.5 sm:mr-2 sm:h-4 sm:w-4" />
@@ -157,7 +145,7 @@ export function ValidationResults() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div className="rounded-lg border p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -202,9 +190,20 @@ export function ValidationResults() {
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
+      {/* 详细结果列表 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>详细校验结果</CardTitle>
+          <CardDescription>
+            点击文档名称查看详细错误信息 • 共 {filteredResults.length} 个文档
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           {/* 快速筛选标签 */}
-          <div className="flex flex-wrap gap-2">
+          <div className="mb-6 flex flex-wrap gap-2">
             <Button
               variant={state.filter.status === "all" ? "default" : "outline"}
               size="sm"
@@ -240,18 +239,7 @@ export function ValidationResults() {
               )
             </Button>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* 详细结果列表 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>详细校验结果</CardTitle>
-          <CardDescription>
-            点击文档名称查看详细错误信息 • 共 {filteredResults.length} 个文档
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
           {filteredResults.length === 0 ? (
             <div className="py-8 text-center">
               <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />

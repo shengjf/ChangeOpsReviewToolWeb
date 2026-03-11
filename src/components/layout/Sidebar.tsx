@@ -25,7 +25,7 @@ export function Sidebar() {
   ).length
 
   return (
-    <aside className="w-full border-b bg-muted/10 lg:w-64 lg:border-r lg:border-b-0">
+    <aside className="w-full border-b bg-muted/10 lg:w-64 lg:border-r lg:border-b-0 lg:fixed lg:top-16 lg:left-0 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
       <div className="p-4 md:p-6">
         <h2 className="mb-4 text-lg font-semibold">操作面板</h2>
 

@@ -11,7 +11,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 /**
  * 生成随机错误
  */
-const generateMockErrors = (fileId: string, _fileName: string) => {
+const generateMockErrors = (fileId: string) => {
   const errorTypes = [
     {
       location: "Sheet1!A3",
@@ -97,9 +97,7 @@ export const validateDocuments = async (
 
   const results: ValidationResult[] = fileIds.map((fileId) => {
     const hasErrors = Math.random() > 0.5 // 50%概率有错误
-    const errors = hasErrors
-      ? generateMockErrors(fileId, `document-${fileId}.docx`)
-      : []
+    const errors = hasErrors ? generateMockErrors(fileId) : []
 
     return {
       fileId,
@@ -121,9 +119,9 @@ export const validateDocuments = async (
  * 模拟生成报告API
  * TODO: 待对接真实接口
  */
-export const generateReport = async (
-  _results: ValidationResult[]
-): Promise<ApiResponse<{ downloadUrl: string }>> => {
+export const generateReport = async (): Promise<
+  ApiResponse<{ downloadUrl: string }>
+> => {
   await delay(1000)
 
   return {
@@ -140,8 +138,7 @@ export const generateReport = async (
  * TODO: 待对接真实接口
  */
 export const generateDocuments = async (
-  templateId: string,
-  _content: Record<string, unknown>
+  templateId: string
 ): Promise<ApiResponse<{ documentUrl: string }>> => {
   await delay(2000)
 
