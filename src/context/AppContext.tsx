@@ -7,6 +7,21 @@ import type { FileInfo, ValidationResult, FilterOptions } from "@/types"
 import { uploadFiles, validateDocuments } from "@/services/api"
 
 /**
+ * 变更等级类型
+ */
+export type ChangeLevel = "一级" | "二级" | "三级" | "四级" | "五级"
+
+/**
+ * 文件类型分类
+ */
+export type FileCategory =
+  | "割接方案"
+  | "告警屏蔽表"
+  | "卓越工程师持证情况"
+  | "服务风险告知"
+  | "用户公告"
+
+/**
  * 应用状态
  */
 interface AppState {
@@ -15,6 +30,10 @@ interface AppState {
   filter: FilterOptions
   isLoading: boolean
   error: string | null
+  changeTimeStart: string
+  changeTimeEnd: string
+  changeLevel: ChangeLevel | null
+  uploadedCategories: FileCategory[]
 }
 
 /**
@@ -32,6 +51,11 @@ type Action =
   | { type: "SET_FILTER"; payload: FilterOptions }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
+  | { type: "SET_CHANGE_TIME_START"; payload: string }
+  | { type: "SET_CHANGE_TIME_END"; payload: string }
+  | { type: "SET_CHANGE_LEVEL"; payload: ChangeLevel | null }
+  | { type: "ADD_UPLOADED_CATEGORY"; payload: FileCategory }
+  | { type: "REMOVE_UPLOADED_CATEGORY"; payload: FileCategory }
 
 /**
  * 初始状态
@@ -42,6 +66,10 @@ const initialState: AppState = {
   filter: { status: "all" },
   isLoading: false,
   error: null,
+  changeTimeStart: "",
+  changeTimeEnd: "",
+  changeLevel: null,
+  uploadedCategories: [],
 }
 
 /**
@@ -83,6 +111,32 @@ function appReducer(state: AppState, action: Action): AppState {
     case "SET_ERROR":
       return { ...state, error: action.payload }
 
+    case "SET_CHANGE_TIME_START":
+      return { ...state, changeTimeStart: action.payload }
+
+    case "SET_CHANGE_TIME_END":
+      return { ...state, changeTimeEnd: action.payload }
+
+    case "SET_CHANGE_LEVEL":
+      return { ...state, changeLevel: action.payload }
+
+    case "ADD_UPLOADED_CATEGORY":
+      return {
+        ...state,
+        uploadedCategories: [
+          ...(state.uploadedCategories || []),
+          action.payload,
+        ],
+      }
+
+    case "REMOVE_UPLOADED_CATEGORY":
+      return {
+        ...state,
+        uploadedCategories: (state.uploadedCategories || []).filter(
+          (cat) => cat !== action.payload
+        ),
+      }
+
     default:
       return state
   }
@@ -99,6 +153,11 @@ interface AppContextType {
   removeFile: (fileId: string) => void
   setFilter: (filter: FilterOptions) => void
   clearError: () => void
+  setChangeTimeStart: (time: string) => void
+  setChangeTimeEnd: (time: string) => void
+  setChangeLevel: (level: ChangeLevel | null) => void
+  addUploadedCategory: (category: FileCategory) => void
+  removeUploadedCategory: (category: FileCategory) => void
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -183,6 +242,41 @@ export function AppProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "SET_ERROR", payload: null })
   }
 
+  /**
+   * 设置变更开始时间
+   */
+  const handleSetChangeTimeStart = (time: string) => {
+    dispatch({ type: "SET_CHANGE_TIME_START", payload: time })
+  }
+
+  /**
+   * 设置变更结束时间
+   */
+  const handleSetChangeTimeEnd = (time: string) => {
+    dispatch({ type: "SET_CHANGE_TIME_END", payload: time })
+  }
+
+  /**
+   * 设置变更等级
+   */
+  const handleSetChangeLevel = (level: ChangeLevel | null) => {
+    dispatch({ type: "SET_CHANGE_LEVEL", payload: level })
+  }
+
+  /**
+   * 添加已上传的文件类别
+   */
+  const handleAddUploadedCategory = (category: FileCategory) => {
+    dispatch({ type: "ADD_UPLOADED_CATEGORY", payload: category })
+  }
+
+  /**
+   * 移除已上传的文件类别
+   */
+  const handleRemoveUploadedCategory = (category: FileCategory) => {
+    dispatch({ type: "REMOVE_UPLOADED_CATEGORY", payload: category })
+  }
+
   const contextValue: AppContextType = {
     state,
     dispatch,
@@ -191,6 +285,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     removeFile: handleRemoveFile,
     setFilter: handleSetFilter,
     clearError: handleClearError,
+    setChangeTimeStart: handleSetChangeTimeStart,
+    setChangeTimeEnd: handleSetChangeTimeEnd,
+    setChangeLevel: handleSetChangeLevel,
+    addUploadedCategory: handleAddUploadedCategory,
+    removeUploadedCategory: handleRemoveUploadedCategory,
   }
 
   return (
