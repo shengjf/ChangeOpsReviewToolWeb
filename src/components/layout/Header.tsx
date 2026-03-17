@@ -4,6 +4,7 @@
 import { FileText, Settings, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { NavLink } from "react-router-dom"
 
 export function Header() {
   return (
@@ -22,18 +23,26 @@ export function Header() {
           </div>
 
           <nav className="ml-4 hidden items-center gap-4 md:ml-8 md:flex md:gap-6">
-            <a
-              href="#"
-              className="text-sm font-medium text-foreground transition-colors hover:text-primary"
+            <NavLink
+              to="/validation"
+              className={({ isActive }) =>
+                `text-sm font-medium transition-colors hover:text-foreground ${
+                  isActive ? "text-foreground" : "text-muted-foreground"
+                }`
+              }
             >
               文档校验
-            </a>
-            <a
-              href="#"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            </NavLink>
+            <NavLink
+              to="/generation"
+              className={({ isActive }) =>
+                `text-sm font-medium transition-colors hover:text-foreground ${
+                  isActive ? "text-foreground" : "text-muted-foreground"
+                }`
+              }
             >
               文档生成
-            </a>
+            </NavLink>
             <a
               href="#"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"

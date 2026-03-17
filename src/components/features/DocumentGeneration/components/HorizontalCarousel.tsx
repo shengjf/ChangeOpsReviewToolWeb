@@ -1,4 +1,10 @@
-import { useState, useCallback, type CSSProperties } from "react"
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  type CSSProperties,
+} from "react"
 import { ChevronLeft, ChevronRight, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -17,6 +23,11 @@ interface HorizontalCarouselProps {
 
 export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
   const [activeCard, setActiveCard] = useState(0)
+  const [trackMinHeight, setTrackMinHeight] = useState(760)
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window === "undefined" ? true : window.innerWidth > 1024
+  )
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([])
 
   const getCardStyle = useCallback(
     (index: number): CSSProperties => {
@@ -24,12 +35,12 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
       const absOffset = Math.abs(offset)
 
       return {
-        transform: `translateX(${offset * 105}%) scale(${absOffset === 0 ? 1 : 0.88})`,
-        opacity: absOffset === 0 ? 1 : absOffset === 1 ? 0.5 : 0,
-        zIndex: absOffset === 0 ? 10 : absOffset === 1 ? 5 : 1,
+        transform: `translateX(${offset * 105}%)`,
+        opacity: absOffset === 0 ? 1 : 0,
+        zIndex: absOffset === 0 ? 10 : 1,
         cursor: absOffset === 0 ? "default" : "pointer",
-        pointerEvents: absOffset > 1 ? "none" : "auto",
-        filter: absOffset === 0 ? "none" : "blur(0.5px)",
+        pointerEvents: absOffset === 0 ? "auto" : "none",
+        filter: "none",
       }
     },
     [activeCard]
@@ -63,6 +74,31 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
   const isStepActive = (index: number) => {
     return index === activeCard
   }
+
+  const updateTrackMinHeight = useCallback(() => {
+    if (!isDesktop) {
+      setTrackMinHeight(0)
+      return
+    }
+
+    // Card 固定高度为 700px，加上阴影和间距
+    setTrackMinHeight(700)
+  }, [isDesktop])
+
+  useEffect(() => {
+    const handleResize = () => {
+      const desktop = window.innerWidth > 1024
+      setIsDesktop(desktop)
+    }
+
+    updateTrackMinHeight()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [updateTrackMinHeight])
+
+  useEffect(() => {
+    updateTrackMinHeight()
+  }, [cards, updateTrackMinHeight])
 
   return (
     <div className="mx-auto w-full max-w-[1400px]">
@@ -110,10 +146,13 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
         </div>
       </div>
 
-      <div className="hcarousel-track relative min-h-[400px]">
+      <div
+        className="hcarousel-track relative"
+        style={isDesktop ? { minHeight: `${trackMinHeight}px` } : undefined}
+      >
         <Button
           variant="ghost"
-          className="hcarousel-arrow hcarousel-arrow-left absolute top-1/2 left-0 z-20 -translate-y-1/2"
+          className="hcarousel-arrow hcarousel-arrow-left"
           onClick={handlePrevClick}
           disabled={activeCard === 0}
           aria-label="上一步"
@@ -121,26 +160,31 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
-        {cards.map((card, index) => (
-          <div
-            key={card.id}
-            className={`hcard ${activeCard === index ? "hcard-current" : ""}`}
-            style={getCardStyle(index)}
-            onClick={() => handleCardClick(index)}
-          >
-            <Card className="h-full overflow-hidden border-0 shadow-none">
-              <CardHeader>
-                <CardTitle className="text-xl">{card.title}</CardTitle>
-                <CardDescription>{card.description}</CardDescription>
-              </CardHeader>
-              <CardContent>{card.content}</CardContent>
-            </Card>
-          </div>
-        ))}
+        <div className="hcarousel-viewport">
+          {cards.map((card, index) => (
+            <div
+              key={card.id}
+              className={`hcard ${activeCard === index ? "hcard-current" : ""}`}
+              style={getCardStyle(index)}
+              onClick={() => handleCardClick(index)}
+              ref={(el) => {
+                cardRefs.current[index] = el
+              }}
+            >
+              <Card className="h-full overflow-hidden border-0 shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-xl">{card.title}</CardTitle>
+                  <CardDescription>{card.description}</CardDescription>
+                </CardHeader>
+                <CardContent>{card.content}</CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
 
         <Button
           variant="ghost"
-          className="hcarousel-arrow hcarousel-arrow-right absolute top-1/2 right-0 z-20 -translate-y-1/2"
+          className="hcarousel-arrow hcarousel-arrow-right"
           onClick={handleNextClick}
           disabled={activeCard === cards.length - 1}
           aria-label="下一步"
