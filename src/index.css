@@ -140,6 +140,7 @@
 
   .hcarousel-viewport {
     position: relative;
+    overflow-x: clip;
   }
 
   .hcard {

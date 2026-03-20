@@ -23,6 +23,7 @@ interface HorizontalCarouselProps {
 
 export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
   const [activeCard, setActiveCard] = useState(0)
+  const [furthestReachedCard, setFurthestReachedCard] = useState(0)
   const [trackMinHeight, setTrackMinHeight] = useState(760)
   const [isDesktop, setIsDesktop] = useState(
     typeof window === "undefined" ? true : window.innerWidth > 1024
@@ -68,7 +69,7 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
   )
 
   const isStepCompleted = (index: number) => {
-    return index < activeCard
+    return index !== activeCard && index <= furthestReachedCard
   }
 
   const isStepActive = (index: number) => {
@@ -99,6 +100,10 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
   useEffect(() => {
     updateTrackMinHeight()
   }, [cards, updateTrackMinHeight])
+
+  useEffect(() => {
+    setFurthestReachedCard((current) => Math.max(current, activeCard))
+  }, [activeCard])
 
   return (
     <div className="mx-auto w-full max-w-[1400px]">
@@ -201,10 +206,10 @@ export function HorizontalCarousel({ cards }: HorizontalCarouselProps) {
             className={cn(
               "hcarousel-dot h-3 w-3 rounded-full p-0",
               activeCard === index
-                ? "active bg-primary"
+                ? "active bg-primary hover:bg-primary/85"
                 : isStepCompleted(index)
-                  ? "bg-green-500"
-                  : "bg-muted"
+                  ? "bg-green-500 hover:bg-green-400"
+                  : "bg-muted-foreground/45 hover:bg-muted-foreground/35"
             )}
             onClick={() => handleStepClick(index)}
             aria-label={`切换到${card.tabLabel}`}
